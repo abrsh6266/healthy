@@ -17,12 +17,14 @@ namespace Auth.Controllers
             _diseaseService = diseaseService;
         }
 
+        [Authorize(Roles = "USER")]
         [HttpGet]
         public async Task<List<Disease>> Get()
         {
             return await _diseaseService.GetAsync();
         }
 
+        [Authorize(Roles = "USER")]
         [HttpGet("{name}")]
         public async Task<IActionResult> GetByName(string name)
         {
@@ -35,7 +37,7 @@ namespace Auth.Controllers
 
             return Ok(diseases);
         }
-
+        [Authorize(Roles = "ADMIN")]
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Disease disease)
         {

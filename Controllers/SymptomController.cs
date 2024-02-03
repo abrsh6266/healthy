@@ -16,12 +16,14 @@ namespace Auth.Controllers
             _symptomService = symptomService;
         }
 
+        [Authorize(Roles = "USER")]
         [HttpGet]
         public async Task<List<Symptom>> Get()
         {
             return await _symptomService.GetAllAsync();
         }
 
+        [Authorize(Roles = "USER")]
         [HttpGet("{name}")]
         public async Task<IActionResult> GetByName(string name)
         {
@@ -34,6 +36,8 @@ namespace Auth.Controllers
 
             return Ok(symptoms);
         }
+
+        [Authorize(Roles = "ADMIN")]
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Symptom symptom)
         {

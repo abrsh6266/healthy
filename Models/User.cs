@@ -6,6 +6,8 @@ namespace Auth.Models
     [CollectionName("users")]
     public class ApplicationUser : MongoIdentityUser<Guid>
     {
+        public string? UserName { get; set; }
+        public string? Email { get; set; }
         public string FullName { get; set; } = string.Empty;
     }
 }
