@@ -67,6 +67,10 @@ namespace Auth.Services
                 {
                     return new LoginResponse { Message = "Invalid password", Success = false };
                 }
+                var role = await _userManager.GetRolesAsync(user);
+                if(request.Role=="ADMIN" && !role.Any(u => u == "ADMIN" || request.Role == null)){
+                        return new LoginResponse { Message = "Invalid", Success = false };
+                }
 #pragma warning disable CS8604 // Possible null reference argument.
                 var claims = new List<Claim>
             {
