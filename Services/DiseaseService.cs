@@ -1,4 +1,6 @@
+using System.Text.RegularExpressions;
 using Auth.Models;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace Auth.Services
@@ -19,7 +21,9 @@ namespace Auth.Services
 
         public async Task<List<Disease>> GetByNameAsync(string name)
         {
-            return await _diseases.Find(d => d.Name == name).ToListAsync();
+            var filter = Builders<Disease>.Filter.Regex("Name", new BsonRegularExpression(new Regex(name, RegexOptions.IgnoreCase)));
+
+            return await _diseases.Find(filter).ToListAsync();
         }
 
         public async Task CreateAsync(Disease disease)
