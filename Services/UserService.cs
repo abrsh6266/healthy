@@ -1,5 +1,6 @@
 using Auth.Dtos;
 using Auth.Models;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace Auth.Services
@@ -24,16 +25,16 @@ namespace Auth.Services
         }
         public async Task<bool> EditUserProfileAsync(string userId, UserEditRequest userEditRequest)
         {
-            var filter = Builders<ApplicationUser>.Filter.Eq(u => u.Id.ToString(), userId);
+            var filter = Builders<ApplicationUser>.Filter.Eq(u => u.Id, new Guid(userId));
 
             var updateDefinition = Builders<ApplicationUser>.Update
                 .Set(u => u.FullName, userEditRequest.FullName)
                 .Set(u => u.UserName, userEditRequest.UserName)
                 .Set(u => u.Email, userEditRequest.Email);
-
             var result = await _users.UpdateOneAsync(filter, updateDefinition);
 
             return result.ModifiedCount > 0;
         }
+
     }
 }

@@ -88,6 +88,43 @@ public class BookmarkService
         var result = await _bookmarkCollection.ReplaceOneAsync(b => b.UserId == userId, bookmark, new ReplaceOptions { IsUpsert = true });
         return result.IsAcknowledged;
     }
+    // BookmarkService.cs
+
+public async Task<bool> RemoveItemFromBookmarkAsync(string userId, string itemName, string itemType)
+{
+    var bookmark = await _bookmarkCollection.Find(b => b.UserId == userId).FirstOrDefaultAsync();
+    Console.WriteLine("helloworld1");
+    if (bookmark == null)
+    {
+        // Bookmark not found for the user
+        return false;
+    }
+    Console.WriteLine("helloworld2");
+    switch (itemType.ToLower())
+    {
+        case "disease":
+            Console.WriteLine("helloworld3");
+            bookmark.Diseases?.RemoveAll(d => d.Name == itemName);
+            break;
+
+        case "drug":
+            Console.WriteLine("helloworld4");
+            bookmark.Drugs?.RemoveAll(d => d.Name == itemName);
+            break;
+
+        case "symptom":
+            Console.WriteLine("helloworld5");
+            bookmark.Symptoms?.RemoveAll(s => s.Name == itemName);
+            break;
+        default:
+            // Handle unsupported item type
+            return false;
+    }
+
+    var result = await _bookmarkCollection.ReplaceOneAsync(b => b.UserId == userId, bookmark, new ReplaceOptions { IsUpsert = true });
+    return result.IsAcknowledged;
+}
+
 
     private async Task<List<Disease>> GetDiseasesByNameAsync(string name)
     {

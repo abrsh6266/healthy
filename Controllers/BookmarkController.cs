@@ -15,8 +15,6 @@ public class BookmarkController : ControllerBase
     {
         _bookmarkService = bookmarkService;
     }
-    
-//    [Authorize(Roles = "USER")]
     [HttpPost("add")]
     public async Task<IActionResult> AddItemToBookmark([FromBody] BookmarkRequest request)
     {
@@ -36,17 +34,41 @@ public class BookmarkController : ControllerBase
     }
 
     [HttpGet("{userId}")]
-        public async Task<IActionResult> GetByUserId(string userId)
+    public async Task<IActionResult> GetByUserId(string userId)
+    {
+        var bookmarks = await _bookmarkService.GetByUserIdAsync(userId);
+
+        if (bookmarks == null)
         {
-            var bookmarks = await _bookmarkService.GetByUserIdAsync(userId);
-
-            if (bookmarks == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(bookmarks);
+            return NotFound();
         }
+
+        return Ok(bookmarks);
+    }
+    [HttpDelete("removeBookmark")]
+    public async Task<IActionResult> RemoveBookmark(string userId, string itemName, string itemType)
+    {
+        try
+        {
+            var result = await _bookmarkService.RemoveItemFromBookmarkAsync(userId, itemName, itemType);
+
+            if (result)
+            {
+                // Item removed from bookmark successfully
+                return Ok("Item removed from bookmark successfully");
+            }
+            else
+            {
+                // Bookmark or item not found
+                return NotFound("Bookmark or item not found");
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle exceptions appropriately
+            return StatusCode(500, $"Internal Server Error: {ex.Message}");
+        }
+    }
 }
 
 public class BookmarkRequest

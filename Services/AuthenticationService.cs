@@ -30,7 +30,7 @@ namespace Auth.Services
                     FullName = request.FullName,
                     Email = request.Email,
                     ConcurrencyStamp = Guid.NewGuid().ToString(),
-                    UserName = request.Email,
+                    UserName = request.Username,
                 };
 
                 var createUserResult = await _userManager.CreateAsync(user, request.Password);
