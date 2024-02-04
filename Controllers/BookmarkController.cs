@@ -32,6 +32,18 @@ public class BookmarkController : ControllerBase
 
         return BadRequest("Failed to add item to bookmark");
     }
+    [HttpGet("{userId}")]
+        public async Task<IActionResult> GetByUserId(string userId)
+        {
+            var bookmarks = await _bookmarkService.GetByUserIdAsync(userId);
+
+            if (bookmarks == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(bookmarks);
+        }
 }
 
 public class BookmarkRequest
