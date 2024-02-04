@@ -60,10 +60,13 @@ namespace Auth.Services
             try
             {
                 var user = await _userManager.FindByEmailAsync(request.Email);
-
                 if (user is null)
-                    return new LoginResponse { Message = "Invalid email/password", Success = false };
-
+                    return new LoginResponse { Message = "Invalid email", Success = false };
+                var passwordValid = await _userManager.CheckPasswordAsync(user, request.Password);
+                if (!passwordValid)
+                {
+                    return new LoginResponse { Message = "Invalid password", Success = false };
+                }
 #pragma warning disable CS8604 // Possible null reference argument.
                 var claims = new List<Claim>
             {
