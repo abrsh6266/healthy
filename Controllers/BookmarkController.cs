@@ -16,7 +16,7 @@ public class BookmarkController : ControllerBase
         _bookmarkService = bookmarkService;
     }
     
-    [Authorize(Roles = "USER")]
+//    [Authorize(Roles = "USER")]
     [HttpPost("add")]
     public async Task<IActionResult> AddItemToBookmark([FromBody] BookmarkRequest request)
     {
@@ -35,7 +35,6 @@ public class BookmarkController : ControllerBase
         return BadRequest("Failed to add item to bookmark");
     }
 
-    [Authorize(Roles = "USER")]
     [HttpGet("{userId}")]
         public async Task<IActionResult> GetByUserId(string userId)
         {

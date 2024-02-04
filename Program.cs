@@ -98,6 +98,7 @@ builder.Services.AddScoped<DiseaseService>();
 builder.Services.AddScoped<DrugService>();
 builder.Services.AddScoped<SymptomService>();
 builder.Services.AddScoped<BookmarkService>();
+builder.Services.AddScoped<UserService>();
 
 var app = builder.Build();
 builder.WebHost.UseUrls("http://0.0.0.0:5000");

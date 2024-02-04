@@ -46,7 +46,7 @@ public class BookmarkService
                 var firstDisease = diseases.FirstOrDefault();
                 Console.WriteLine(firstDisease?.Name);
 #pragma warning disable CS8604 // Possible null reference argument.
-                if (firstDisease != null &&  !bookmark.Diseases.Any(d => d.Id == firstDisease.Id))
+                if (firstDisease != null && !bookmark.Diseases.Any(d => d.Id == firstDisease.Id))
                 {
                     Console.WriteLine(firstDisease?.Name);
                     bookmark.Diseases.Add(firstDisease);

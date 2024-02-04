@@ -18,8 +18,9 @@ namespace Auth.Services
         public async Task<(ApplicationUser User, Bookmark Bookmark)> GetUserWithBookmarkByIdAsync(string userId)
         {
             var user = await _users.Find(u => u.Id.ToString() == userId).FirstOrDefaultAsync();
-            var bookmark = await _bookmarkService.GetByUserIdAsync(userId);
-            return (user, bookmark);
+            var bookmarks = await _bookmarkService.GetByUserIdAsync(userId);
+            Console.WriteLine("hello world2");
+            return (user, bookmarks);
         }
         public async Task<bool> EditUserProfileAsync(string userId, UserEditRequest userEditRequest)
         {
