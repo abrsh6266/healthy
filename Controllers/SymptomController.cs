@@ -4,9 +4,10 @@ using Auth.Services;
 using Microsoft.AspNetCore.Authorization;
 namespace Auth.Controllers
 {
+//    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-//    [Authorize]
+    //    [Authorize]
     public class SymptomController : Controller
     {
         private readonly SymptomService _symptomService;
@@ -15,15 +16,11 @@ namespace Auth.Controllers
         {
             _symptomService = symptomService;
         }
-
-        [Authorize(Roles = "USER")]
         [HttpGet]
         public async Task<List<Symptom>> Get()
         {
             return await _symptomService.GetAllAsync();
         }
-
-        [Authorize(Roles = "USER")]
         [HttpGet("{name}")]
         public async Task<IActionResult> GetByName(string name)
         {
@@ -36,13 +33,24 @@ namespace Auth.Controllers
 
             return Ok(symptoms);
         }
-
-        [Authorize(Roles = "ADMIN")]
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Symptom symptom)
         {
             await _symptomService.CreateAsync(symptom);
             return CreatedAtAction(nameof(Get), new { id = symptom.Id }, symptom);
         }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> RemoveSymptom(string id)
+        {
+            var isRemoved = await _symptomService.RemoveSymptomAsync(id);
+
+            if (isRemoved)
+            {
+                return Ok("Symptom removed successfully");
+            }
+
+            return NotFound("Symptom not found");
+        }
+
     }
 }

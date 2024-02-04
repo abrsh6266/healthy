@@ -32,5 +32,13 @@ namespace Auth.Services
         {
             await _drugs.InsertOneAsync(drug);
         }
+        public async Task<bool> RemoveDrugAsync(string drugId)
+        {
+            var filter = Builders<Drug>.Filter.Eq(d => d.Id, drugId);
+            var result = await _drugs.DeleteOneAsync(filter);
+
+            return result.DeletedCount > 0;
+        }
+
     }
 }

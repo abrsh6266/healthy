@@ -7,7 +7,7 @@ namespace Auth.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-//    [Authorize]
+    //    [Authorize]
     public class DrugController : Controller
     {
         private readonly DrugService _drugService;
@@ -44,6 +44,18 @@ namespace Auth.Controllers
         {
             await _drugService.CreateAsync(drug);
             return CreatedAtAction(nameof(Get), new { id = drug.Id }, drug);
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> RemoveDrug(string id)
+        {
+            var isRemoved = await _drugService.RemoveDrugAsync(id);
+
+            if (isRemoved)
+            {
+                return Ok("Drug removed successfully");
+            }
+
+            return NotFound("Drug not found");
         }
 
     }

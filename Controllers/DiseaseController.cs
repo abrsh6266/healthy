@@ -7,7 +7,7 @@ namespace Auth.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-//    [Authorize]
+    //    [Authorize]
     public class DiseaseController : ControllerBase
     {
         private readonly DiseaseService _diseaseService;
@@ -16,15 +16,11 @@ namespace Auth.Controllers
         {
             _diseaseService = diseaseService;
         }
-
-        [Authorize(Roles = "USER")]
         [HttpGet]
         public async Task<List<Disease>> Get()
         {
             return await _diseaseService.GetAsync();
         }
-
-        [Authorize(Roles = "USER")]
         [HttpGet("{name}")]
         public async Task<IActionResult> GetByName(string name)
         {
@@ -37,12 +33,24 @@ namespace Auth.Controllers
 
             return Ok(diseases);
         }
-        [Authorize(Roles = "ADMIN")]
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Disease disease)
         {
             await _diseaseService.CreateAsync(disease);
             return CreatedAtAction(nameof(Get), new { id = disease.Id }, disease);
         }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> RemoveDisease(string id)
+        {
+            var isRemoved = await _diseaseService.RemoveDiseaseAsync(id);
+
+            if (isRemoved)
+            {
+                return Ok("Disease removed successfully");
+            }
+
+            return NotFound("Disease not found");
+        }
+
     }
 }
