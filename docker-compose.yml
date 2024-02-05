@@ -1,0 +1,8 @@
+version: '3.8'
+
+services:
+  your-app:
+    image: your-app-name
+    ports:
+      - "8080:80"
+    # Add other configurations as needed

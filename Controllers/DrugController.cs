@@ -8,7 +8,7 @@ namespace Auth.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
-    public class DrugController : Controller
+    public class DrugController : ControllerBase
     {
         private readonly DrugService _drugService;
 
