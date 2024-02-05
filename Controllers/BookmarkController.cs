@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
 public class BookmarkController : ControllerBase
 {

@@ -1,7 +1,6 @@
 using System.Net;
 using Auth.Dtos;
 using Auth.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]

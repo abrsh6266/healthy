@@ -7,7 +7,7 @@ namespace Auth.Controllers
 //    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    //    [Authorize]
+    [Authorize]
     public class SymptomController : Controller
     {
         private readonly SymptomService _symptomService;

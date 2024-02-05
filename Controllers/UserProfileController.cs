@@ -7,6 +7,7 @@ namespace Auth.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class UserProfileController : Controller
     {
         private readonly UserService _userService;
@@ -15,7 +16,6 @@ namespace Auth.Controllers
         {
             _userService = userService;
         }
-        [Authorize(Roles = "USER")]
         [HttpGet("{userId}")]
         public async Task<IActionResult> GetUserProfile(string userId)
         {
