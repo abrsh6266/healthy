@@ -12,9 +12,12 @@ namespace Auth.Services
     {
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public AuthenticationService(UserManager<ApplicationUser> userManager)
+        private readonly IConfiguration _configuration;
+
+        public AuthenticationService(UserManager<ApplicationUser> userManager, IConfiguration configuration)
         {
             _userManager = userManager;
+            _configuration = configuration;
         }
 
         public async Task<RegisterResponse> RegisterAsync(RegisterRequest request)
@@ -68,8 +71,9 @@ namespace Auth.Services
                     return new LoginResponse { Message = "Invalid password", Success = false };
                 }
                 var role = await _userManager.GetRolesAsync(user);
-                if(request.Role=="ADMIN" && !role.Any(u => u == "ADMIN" || request.Role == null)){
-                        return new LoginResponse { Message = "Invalid", Success = false };
+                if (request.Role == "ADMIN" && !role.Any(u => u == "ADMIN" || request.Role == null))
+                {
+                    return new LoginResponse { Message = "Invalid", Success = false };
                 }
 #pragma warning disable CS8604 // Possible null reference argument.
                 var claims = new List<Claim>
@@ -83,11 +87,13 @@ namespace Auth.Services
                 var roleClaims = roles.Select(x => new Claim(ClaimTypes.Role, x));
                 claims.AddRange(roleClaims);
 
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("realone876139gjkjadagdgakabrshxo9hhhe"));
+#pragma warning disable CS8604 // Possible null reference argument.
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:SecretKey"]));
+#pragma warning restore CS8604 // Possible null reference argument.
 
                 var token = new JwtSecurityToken(
-                    issuer: "https://localhost:5001",
-                    audience: "https://localhost:5001",
+                    issuer: _configuration["JwtSettings:Issuer"],
+                    audience: _configuration["JwtSettings:Audience"],
                     claims: claims,
                     expires: DateTime.Now.AddHours(3),
                     signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)

@@ -12,17 +12,24 @@ using MongoDB.Driver;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Load configuration from appsettings.json
+builder.Configuration.AddJsonFile("appsettings.json");
+
 // Add services to the container.
 BsonSerializer.RegisterSerializer(new GuidSerializer(MongoDB.Bson.BsonType.String));
 BsonSerializer.RegisterSerializer(new DateTimeSerializer(MongoDB.Bson.BsonType.String));
 BsonSerializer.RegisterSerializer(new DateTimeOffsetSerializer(MongoDB.Bson.BsonType.String));
 
 // MongoDB configuration
-builder.Services.AddSingleton<IMongoClient>(new MongoClient("mongodb://localhost:27017"));
+var mongoDbSettings = builder.Configuration.GetSection("MongoDbSettings");
+var mongoDbConnectionString = mongoDbSettings["ConnectionString"];
+var mongoDbDatabaseName = mongoDbSettings["DatabaseName"];
+
+builder.Services.AddSingleton<IMongoClient>(new MongoClient(mongoDbConnectionString));
 builder.Services.AddScoped(database =>
 {
     var client = database.GetRequiredService<IMongoClient>();
-    return client.GetDatabase("auth");
+    return client.GetDatabase(mongoDbDatabaseName);
 });
 
 // Add MongoDB Identity Configuration
@@ -30,8 +37,8 @@ var mongoDbIdentityConfig = new MongoDbIdentityConfiguration
 {
     MongoDbSettings = new MongoDbSettings
     {
-        ConnectionString = "mongodb://localhost:27017",
-        DatabaseName = "auth"
+        ConnectionString = mongoDbConnectionString,
+        DatabaseName = mongoDbDatabaseName
     },
     IdentityOptionsAction = options =>
     {
@@ -56,6 +63,12 @@ builder.Services.ConfigureMongoDbIdentity<ApplicationUser, ApplicationRole, Guid
     .AddRoleManager<RoleManager<ApplicationRole>>()
     .AddDefaultTokenProviders();
 
+// JWT configuration
+var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+var issuer = jwtSettings["Issuer"];
+var audience = jwtSettings["Audience"];
+var secretKey = jwtSettings["SecretKey"];
+
 builder.Services.AddAuthentication(x =>
 {
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -65,15 +78,17 @@ builder.Services.AddAuthentication(x =>
 {
     x.RequireHttpsMetadata = true;
     x.SaveToken = true;
+#pragma warning disable CS8604
     x.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
         ValidateAudience = true,
-        ValidIssuer = "https://localhost:5001",
-        ValidAudience = "https://localhost:5001",
+        ValidIssuer = issuer,
+        ValidAudience = audience,
         ValidateLifetime = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("realone876139gjkjadagdgakabrshxo9hhhe")),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
     };
+#pragma warning restore CS8604
 });
 
 
@@ -85,7 +100,7 @@ builder.Services.AddCors(options =>
             .AllowAnyOrigin()
             .AllowAnyMethod()
             .AllowAnyHeader());
-});
+}); 
 
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();

@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Authorization;
 namespace Auth.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
     [Authorize]
+    [Route("api/[controller]")]
     public class DiseaseController : ControllerBase
     {
         private readonly DiseaseService _diseaseService;
